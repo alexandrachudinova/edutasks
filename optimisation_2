@@ -1,0 +1,7 @@
+[HttpGet]
+public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+{
+    // Строгое использование await вместо .Result или .Wait()
+    var result = await _orderService.GetOrdersAsync(cancellationToken);
+    return Ok(result);
+}
