@@ -1,0 +1,13 @@
+public async Task<List<OrderResponseDto>> GetOrdersAsync(CancellationToken cancellationToken)
+{
+    return await _context.Orders
+        .AsNoTracking() // Отключает Change Tracker -> снижение нагрузки на GC
+        .Include(o => o.Customer) // Устранение N+1 через единый SQL JOIN
+        .Select(o => new OrderResponseDto // Передача только необходимых полей
+        {
+            Id = o.Id,
+            ClientName = o.Customer.Name,
+            TotalAmount = o.TotalAmount
+        })
+        .ToListAsync(cancellationToken); // Асинхронное выполнение без блокировки потока
+}
